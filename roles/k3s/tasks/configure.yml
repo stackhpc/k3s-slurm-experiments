@@ -1,0 +1,42 @@
+# modifed from https://github.com/k3s-io/k3s-ansible/blob/master/roles/k3s/node/tasks/main.yml
+
+- name: Copy K3s service file
+  # TODO: currently this can't be done in install as the token needs to be defined
+  template:
+    src: k3s.service.j2
+    dest: "/etc/systemd/system/k3s-{{ k3s_node_type }}.service"
+    owner: root
+    group: root
+    mode: 0755
+  register: _ks3_service
+
+- name: Ensure k3s service state
+  systemd:
+    name: "k3s-{{ k3s_node_type }}"
+    daemon_reload: "{{ _ks3_service.changed }}"
+    state: "{{ 'restarted' if _ks3_service.changed else 'started' }}"
+    enabled: yes
+
+- name: Copy config file to user home directory
+  copy:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: ~{{ ansible_user }}/.kube/config
+    remote_src: yes
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "u=rw,g=,o="
+  when: k3s_node_type == 'server'
+
+- name: Create kubectl symlink
+  file:
+    src: /usr/local/bin/k3s
+    dest: /usr/local/bin/kubectl
+    state: link
+  when: k3s_node_type == 'server'
+
+- name: Create crictl symlink
+  file:
+    src: /usr/local/bin/k3s
+    dest: /usr/local/bin/crictl
+    state: link
+  when: k3s_node_type == 'server'

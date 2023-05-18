@@ -1,0 +1,28 @@
+- hosts: localhost
+  become: no
+  gather_facts: no
+  name: Create in-memory inventory
+  tasks:
+    - name: Read terraform outputs
+      command: terraform output -json
+      register: _tf_outputs
+    - name: Set fact for ips
+      set_fact:
+        cluster_ips: "{{ (_tf_outputs.stdout | from_json).ips.value }}"
+    - add_host:
+        name: "{{ item.key }}"
+        ansible_host: "{{ item.value }}"
+        ansible_user: rocky
+      loop: "{{ cluster_ips | dict2items }}"
+
+- hosts: all
+  become: yes
+  gather_facts: no
+  name: Install k3s
+  tasks:
+    - include_role:
+        name: k3s
+      vars:
+        k3s_node_type: "{{ 'server' if 'control' in inventory_hostname else 'agent' }}"
+        k3s_server_token:  nzeSGBpI.Fo22YoBGGSNzH2Y4 # [a-z0-9]{6}.[a-z0-9]{16}
+        k3s_server_address: "{{ hostvars['k3s-control'].ansible_host }}" # assuming internal is broken!
