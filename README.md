@@ -7,6 +7,7 @@ Demo of creating a k3s cluster.
 - The k3s role is split into an "install" stage which could be run during image build and a "configure" stage which
   would ideally be run during boot.
 - Currently this templates out the k3s service file during the "configure" stage, as the inventory-defined token cannot be assumed to be known at "install" time. It'd be nice to pass that dynamically somehow.
+- The `--cluster-init` flag could be added to the FIRST server node to provide an HA cluster with embedded `etcd` (might cause potential timing issues). See [here](https://docs.k3s.io/datastore/ha-embedded).
 
 ## Install
 
