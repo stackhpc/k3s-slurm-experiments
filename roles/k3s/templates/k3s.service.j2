@@ -10,7 +10,7 @@ ExecStartPre=-/sbin/modprobe overlay
 ExecStart=/usr/local/bin/k3s \
     {{ k3s_node_type }} \
     {% if k3s_node_type == 'agent' %}--server https://{{ k3s_server_address }}:6443{% endif %} \
-    --token {{ k3s_server_token }} \
+    --token-file {{ k3s_token_file }} \
     --data-dir {{ k3s_data_dir }} \
     {{ k3s_agent_args }}
 KillMode=process

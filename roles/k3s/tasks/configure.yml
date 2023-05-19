@@ -1,20 +1,26 @@
 # modifed from https://github.com/k3s-io/k3s-ansible/blob/master/roles/k3s/node/tasks/main.yml
 
-- name: Copy K3s service file
-  # TODO: currently this can't be done in install as the token needs to be defined
-  template:
-    src: k3s.service.j2
-    dest: "/etc/systemd/system/k3s-{{ k3s_node_type }}.service"
+- name: Ensure k3s token directory exists
+  file:
+    state: directory
+    path: "{{ k3s_token_file | dirname }}"
     owner: root
     group: root
-    mode: 0755
-  register: _ks3_service
+    mode: ug=rw,o=
+
+- name: Create k3s token file
+  copy:
+    content: "{{ ks3_token }}"
+    dest: "{{ k3s_token_file }}"
+    owner: root
+    group: root
+    mode: ug=rw,o=
+  register: _ks3_token_file
 
 - name: Ensure k3s service state
   systemd:
     name: "k3s-{{ k3s_node_type }}"
-    daemon_reload: "{{ _ks3_service.changed }}"
-    state: "{{ 'restarted' if _ks3_service.changed else 'started' }}"
+    state: started # TODO: add logic to stop it?
     enabled: yes
 
 - name: Copy config file to user home directory

@@ -62,6 +62,21 @@
 
 # modified from https://github.com/k3s-io/k3s-ansible/blob/master/roles/k3s/master/tasks/main.yml
 
+- name: Template K3s service file
+  template:
+    src: k3s.service.j2
+    dest: "/etc/systemd/system/k3s-{{ k3s_node_type }}.service"
+    owner: root
+    group: root
+    mode: 0755
+  register: _ks3_service
+
+- name: Ensure k3s service updated
+  systemd:
+    name: "k3s-{{ k3s_node_type }}"
+    daemon_reload: "{{ _ks3_service.changed }}"
+    enabled: yes
+
 - name: Create directory .kube
   file:
     path: ~{{ ansible_user }}/.kube
