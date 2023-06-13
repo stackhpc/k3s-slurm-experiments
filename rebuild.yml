@@ -1,0 +1,9 @@
+- import_playbook: inventory.yml
+
+- hosts: all
+  become: no
+  gather_facts: no
+  tasks:
+    - command: "openstack server rebuild {{ instance_id }}"
+      delegate_to: localhost
+    - wait_for_connection:
