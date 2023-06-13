@@ -1,20 +1,5 @@
-- hosts: localhost
-  become: no
-  gather_facts: no
-  name: Create in-memory inventory
-  tasks:
-    - name: Read terraform outputs
-      command: terraform output -json
-      register: _tf_outputs
-    - name: Set fact for ips
-      set_fact:
-        cluster_ips: "{{ (_tf_outputs.stdout | from_json).ips.value }}"
-    - name: Add hosts
-      add_host:
-        name: "{{ item.key }}"
-        ansible_host: "{{ item.value }}"
-        ansible_user: cloud-user
-      loop: "{{ cluster_ips | dict2items }}"
+
+- import_playbook: inventory.yml
 
 - hosts: all
   become: yes

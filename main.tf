@@ -32,3 +32,7 @@ resource "openstack_compute_instance_v2" "test" {
 output "ips" {
     value = {for o in openstack_compute_instance_v2.test: o.name => o.network[0].fixed_ip_v4}
 }
+
+output "ids" {
+  value = {for o in openstack_compute_instance_v2.test: o.name => o.id}
+}
