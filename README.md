@@ -15,7 +15,7 @@ Demo of creating a k3s cluster.
     python3.9 -m venv venv
     . venv/bin/activate
     pip install -U pip
-    pip install ansible
+    pip install -f requirements.txt
     terraform init
 
 ## Run
