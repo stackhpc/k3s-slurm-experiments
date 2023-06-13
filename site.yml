@@ -13,7 +13,7 @@
       add_host:
         name: "{{ item.key }}"
         ansible_host: "{{ item.value }}"
-        ansible_user: rocky
+        ansible_user: cloud-user
       loop: "{{ cluster_ips | dict2items }}"
 
 - hosts: all
