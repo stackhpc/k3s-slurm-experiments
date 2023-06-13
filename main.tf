@@ -12,12 +12,12 @@ resource "openstack_compute_instance_v2" "test" {
   for_each = toset(["control", "compute-0", "compute-1"])
 
   name = "k3s-${each.key}"
-  image_name = "Rocky-8-GenericCloud-8.6.20220702.0.x86_64.qcow2"
-  flavor_name = "vm.ska.cpu.general.small"
-  key_pair = "slurm-app-ci"
+  image_name = "Rocky8"
+  flavor_name = "general.v1.small"
+  key_pair = "steveb-ansible"
   
   network {
-    name = "portal-internal"
+    name = "stackhpc-ipv4-geneve"
     access_network = true
   }
 
