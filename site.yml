@@ -9,7 +9,8 @@
     - name: Set fact for ips
       set_fact:
         cluster_ips: "{{ (_tf_outputs.stdout | from_json).ips.value }}"
-    - add_host:
+    - name: Add hosts
+      add_host:
         name: "{{ item.key }}"
         ansible_host: "{{ item.value }}"
         ansible_user: rocky
@@ -25,4 +26,4 @@
       vars:
         k3s_node_type: "{{ 'server' if 'control' in inventory_hostname else 'agent' }}"
         ks3_token:  nzeSGBpI.Fo22YoBGGSNzH2Y4 # [a-z0-9]{6}.[a-z0-9]{16}
-        k3s_server_address: "{{ hostvars['k3s-control'].ansible_host }}" # assuming internal is broken!
+        k3s_server_address: "{{ hostvars['k3s-control'].ansible_host }}" # assuming internal DNS is broken!
