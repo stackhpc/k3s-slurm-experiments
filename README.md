@@ -15,7 +15,7 @@ Demo of creating a k3s cluster.
     python3.9 -m venv venv
     . venv/bin/activate
     pip install -U pip
-    pip install -f requirements.txt
+    pip install -r requirements.txt
     terraform init
 
 ## Run
