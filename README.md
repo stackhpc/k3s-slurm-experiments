@@ -26,7 +26,7 @@ Demo of creating a k3s cluster.
 ## Usage
 
     terraform output
-    ssh rocky@<k3s-control IP>
+    ssh cloud-user@<k3s-control IP>
     export KUBECONFIG=~/.kube/config
     kubectl ...
 
