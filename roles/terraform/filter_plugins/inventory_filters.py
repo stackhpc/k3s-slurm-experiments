@@ -5,7 +5,7 @@ def expand_nodes(mapping, defaults):
 
             mapping:
 
-                key: hostname or hostrange of form "prefix[start:end]" (inclusive)
+                key: hostname or hostrange of form "prefix[start-end]" (inclusive)
                 value: dict or None, in which case defaults is used
             
             defaults: dict, used in place of mapping value if that is None
@@ -23,7 +23,7 @@ def expand_nodes(mapping, defaults):
         if '[' in k:
             prefix, tail = k.split('[')
             hostrange = tail.rstrip(']')
-            start, end = (int(v) for v in hostrange.split(':'))
+            start, end = (int(v) for v in hostrange.split('-'))
             for h in range(start, end + 1):
                 host = prefix + str(h)
                 output[host] = values

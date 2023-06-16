@@ -8,4 +8,4 @@ all:
     cluster_nodes:
       control:
         flavor_name: general.v1.medium
-      compute-[0:1]:
+      compute-[0-1]:

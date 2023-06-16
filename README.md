@@ -10,16 +10,20 @@ Demo of creating a k3s cluster.
 - Currently the (hardcoded!) server token file is created via Ansible; it'd be nice to pass this via e.g. cloud-init, but this does require templating the TF from ansible.
 - The `--cluster-init` flag could be added to the FIRST server node to provide an HA cluster with embedded `etcd` (might cause potential timing issues). See [here](https://docs.k3s.io/datastore/ha-embedded).
 
+Note the infrastructure is defined using ("all"-group) group-vars in `inventory/config.yml`. Simple continuous Slurm [node range expressions](https://slurm.schedmd.com/scontrol.html#OPT_hostlist) such as `compute-[0-1]` may be used to define multiple nodes at once. The `cluster_node_defaults` variable provides any variables undefined for a particular node.
+
 ## Install
 
     python3.9 -m venv venv
     . venv/bin/activate
     pip install -U pip
     pip install -r requirements.txt
-    terraform init
+
+Ensure a `clouds.yaml` file is available.
 
 ## Run
-
+    
+    export OS_CLOUD=openstack
     ansible-playbook infra.yml  # creates infrastructure
     ansible-playbook site.yml   # configures k3s etc
 
