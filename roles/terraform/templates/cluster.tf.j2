@@ -9,7 +9,7 @@ terraform {
 
 resource "openstack_compute_instance_v2" "test" {
 
-  for_each = toset(["control", "compute-0", "compute-1"])
+  for_each = toset( {{ cluster_nodes | to_json }})
 
   name = "k3s-${each.key}"
   image_name = "Rocky8"
@@ -28,7 +28,6 @@ resource "openstack_compute_instance_v2" "test" {
   EOF
 
 }
-
 output "ips" {
     value = {for o in openstack_compute_instance_v2.test: o.name => o.network[0].fixed_ip_v4}
 }
