@@ -11,6 +11,10 @@
     - cluster.tf.j2
     - terraform.tfvars.json.j2
 
+- name: Initialise terraform
+  # This is equivalent of using community.general.terraform force_init: true, init_reconfigure: true
+  command: terraform -chdir={{ terraform_project_path }} init -reconfigure -upgrade -no-color
+
 - name: Create Terraform plan
   # Can't generate a destroy plan with community.general.terraform
   # which means we can't prompt the user
@@ -19,9 +23,6 @@
     {{ '-destroy' if terraform_state == 'absent' else '' }}
     -out=terraform.plan
     -no-color
-  # consider -json
-    # force_init: yes
-    # init_reconfigure: yes
   register: _tf_plan
 
 - name: Show Terraform plan
@@ -48,7 +49,7 @@
     - not terraform_autoapprove | bool
     - not _tf_approve_plan.user_input | bool
 
-- name: Provision infrastructure using Terraform
+- name: Ensure infrastructure using Terraform
   community.general.terraform:
     project_path: "{{ terraform_project_path }}"
     state: "{{ terraform_state }}"
@@ -59,6 +60,7 @@
   when:
     - terraform_changes
     - terraform_autoapprove or (_tf_approve_plan.user_input | bool)
+  # TODO: be nicer to get the equivalent of the -json output for future use really
 
 - name: Show Terraform provision output
   debug:
