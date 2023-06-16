@@ -1,0 +1,7 @@
+- hosts: localhost
+  become: no
+  gather_facts: no
+  tasks:
+    - name: Ensure infrastructure
+      import_role:
+        name: terraform

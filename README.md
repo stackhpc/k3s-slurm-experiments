@@ -2,13 +2,15 @@
 
 Demo of creating a k3s cluster.
 
-- Terraform is used to create 3x nodes.
-- Ansible builds an in-memory inventory from terraform output.
+- Ansible runs Terraform is used to create 3x nodes.
+- Ansible builds an in-memory inventory from Terraform output.
 - The k3s role is split into an "install" stage which could be run during image build and a "configure" stage which
   would ideally be run during boot.
 - The server token is passed using the `--token-file` flag in the service's `ExecStart`; therefore it is not visible from e.g. `systemctl show ...` or `ps`.
 - Currently the (hardcoded!) server token file is created via Ansible; it'd be nice to pass this via e.g. cloud-init, but this does require templating the TF from ansible.
 - The `--cluster-init` flag could be added to the FIRST server node to provide an HA cluster with embedded `etcd` (might cause potential timing issues). See [here](https://docs.k3s.io/datastore/ha-embedded).
+
+Note the infrastructure is defined using ("all"-group) group-vars in `inventory/config.yml`. Simple continuous Slurm [node range expressions](https://slurm.schedmd.com/scontrol.html#OPT_hostlist) such as `compute-[0-1]` may be used to define multiple nodes at once. The `cluster_node_defaults` variable provides any variables undefined for a particular node.
 
 ## Install
 
@@ -16,12 +18,26 @@ Demo of creating a k3s cluster.
     . venv/bin/activate
     pip install -U pip
     pip install -r requirements.txt
-    terraform init
+
+Ensure a `clouds.yaml` file is available.
 
 ## Run
+    
+    export OS_CLOUD=openstack
+    ansible-playbook infra.yml  # creates infrastructure
+    ansible-playbook site.yml   # configures k3s etc
 
-    terraform apply
-    ansible-playbook site.yml
+Note `infra.yml` is broken out as a separate playbook to make `site.yml` faster.
+
+## Optional plays
+
+Rebuild all instances with their current image (i.e., undo `site.yml`):
+
+    ansible-playbook rebuild.yml
+
+Destroy infrastructure:
+
+    ansible-playbook infra.yml -e terraform_state=absent
 
 ## Usage
 

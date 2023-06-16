@@ -1,5 +1,11 @@
-
-- import_playbook: inventory.yml
+- hosts: localhost
+  become: no
+  gather_facts: no
+  tasks:
+    - name: Create in-memory inventory
+      import_role:
+        name: terraform
+        tasks_from: inventory.yml
 
 - hosts: all
   become: yes
