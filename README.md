@@ -2,8 +2,8 @@
 
 Demo of creating a k3s cluster.
 
-- Terraform is used to create 3x nodes.
-- Ansible builds an in-memory inventory from terraform output.
+- Ansible runs Terraform is used to create 3x nodes.
+- Ansible builds an in-memory inventory from Terraform output.
 - The k3s role is split into an "install" stage which could be run during image build and a "configure" stage which
   would ideally be run during boot.
 - The server token is passed using the `--token-file` flag in the service's `ExecStart`; therefore it is not visible from e.g. `systemctl show ...` or `ps`.
@@ -20,8 +20,20 @@ Demo of creating a k3s cluster.
 
 ## Run
 
-    terraform apply
-    ansible-playbook site.yml
+    ansible-playbook infra.yml  # creates infrastructure
+    ansible-playbook site.yml   # configures k3s etc
+
+Note `infra.yml` is broken out as a separate playbook to make `site.yml` faster.
+
+## Optional plays
+
+Rebuild all instances with their current image (i.e., undo `site.yml`):
+
+    ansible-playbook rebuild.yml
+
+Destroy infrastructure:
+
+    ansible-playbook infra.yml -e terraform_state=absent
 
 ## Usage
 
