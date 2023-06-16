@@ -6,6 +6,6 @@ all:
       flavor_name: general.v1.small
       key_pair: steveb-ansible
     cluster_nodes:
-      control: "{{ cluster_node_defaults }}"
-      compute-0: "{{ cluster_node_defaults }}"
-      compute-1: "{{ cluster_node_defaults }}"
+      control:
+        flavor_name: general.v1.medium
+      compute-[0:1]:

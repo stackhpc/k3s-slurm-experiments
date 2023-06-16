@@ -4,7 +4,7 @@
   name: Create in-memory inventory
   tasks:
     - name: Read terraform outputs
-      command: terraform output -json
+      command: terraform -chdir=terraform output -json # TODO: need to link this to the role config
       register: _tf_outputs
     - name: Set facts from terraform outputs
       set_fact:

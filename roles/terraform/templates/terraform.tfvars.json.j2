@@ -1,1 +1,4 @@
-{{ terraform_variables | to_nice_json }}
+{
+    "cluster_name": "{{ cluster_name }}",
+    "cluster_nodes": {{ cluster_nodes | expand_nodes(cluster_node_defaults) | to_nice_json }}
+}
