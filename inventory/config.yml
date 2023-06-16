@@ -1,3 +1,10 @@
 all:
   vars:
-    cluster_nodes: ["control", "compute-0", "compute-1"]
+    cluster_node_defaults:
+      image_name: Rocky8
+      flavor_name: general.v1.small
+      key_pair: steveb-ansible
+    cluster_nodes:
+      control: "{{ cluster_node_defaults }}"
+      compute-0: "{{ cluster_node_defaults }}"
+      compute-1: "{{ cluster_node_defaults }}"

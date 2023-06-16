@@ -1,3 +1,4 @@
 terraform_project_path: terraform/
 terraform_state: present
 terraform_autoapprove: false
+terraform_vars: {}

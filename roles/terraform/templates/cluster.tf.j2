@@ -7,9 +7,13 @@ terraform {
   }
 }
 
+{% for var_name in terraform_variables %}
+variable "{{ var_name }}" {}
+{% endfor %}
+
 resource "openstack_compute_instance_v2" "test" {
 
-  for_each = toset( {{ cluster_nodes | to_json }})
+  for_each = var.cluster_nodes
 
   name = "k3s-${each.key}"
   image_name = "Rocky8"

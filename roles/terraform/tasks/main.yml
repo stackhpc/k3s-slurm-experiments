@@ -15,6 +15,8 @@
     plan_file: terraform.plan
     force_init: yes
     init_reconfigure: yes
+    variables: "{{ terraform_variables }}"
+    complex_vars: true
   register: _tf_plan
 
 - name: Show Terraform plan
@@ -40,6 +42,8 @@
     force_init: yes
     init_reconfigure: yes
     plan_file: terraform.plan
+    variables: "{{ terraform_variables }}"
+    complex_vars: true
   register: terraform_provision
 
 - name: Show Terraform provision output

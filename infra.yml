@@ -5,3 +5,6 @@
     - name: Ensure infrastructure
       import_role:
         name: terraform
+      vars:
+        terraform_variables:
+          cluster_nodes: "{{ cluster_nodes }}"
