@@ -1,5 +1,6 @@
 all:
   vars:
+    cluster_name: k3s
     cluster_node_defaults:
       image_name: Rocky8
       flavor_name: general.v1.small

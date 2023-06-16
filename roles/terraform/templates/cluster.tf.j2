@@ -15,10 +15,10 @@ resource "openstack_compute_instance_v2" "test" {
 
   for_each = var.cluster_nodes
 
-  name = "k3s-${each.key}"
-  image_name = "Rocky8"
-  flavor_name = "general.v1.small"
-  key_pair = "steveb-ansible"
+  name = "${var.cluster_name}-${each.key}"
+  image_name = each.value.image_name
+  flavor_name = each.value.flavor_name
+  key_pair = each.value.key_pair
   
   network {
     name = "stackhpc-ipv4-geneve"
