@@ -1,0 +1,14 @@
+slurm_packages:
+  control:
+    - ohpc-base
+    - ohpc-slurm-server
+  compute:
+    - ohpc-base-compute
+    - ohpc-slurm-client
+    - lmod-ohpc
+
+slurm_munge_key: # must be base64 encoded
+slurm_role: # per-node: one of control,compute
+slurm_partitions: # list of slurm.conf PartitionName... lines
+slurm_cluster_name:
+slurm_control_address: 

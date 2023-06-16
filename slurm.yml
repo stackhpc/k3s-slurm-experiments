@@ -1,0 +1,30 @@
+- hosts: localhost
+  become: no
+  gather_facts: no
+  tasks:
+    - name: Create in-memory inventory
+      import_role:
+        name: terraform
+        tasks_from: inventory.yml
+
+- hosts: all
+  become: yes
+  gather_facts: no
+  name: Install and configure Slurm
+  vars:
+    slurm_role: "{{ 'control' if 'control' in inventory_hostname else 'compute' }}"
+    slurm_munge_key: "{{ lookup('file', 'munge.key') | b64encode }}"
+    slurm_partitions:
+      - PartitionName=normal Nodes={{ cluster_name }}-compute-[0-1] Default=YES MaxTime=24:00:00 State=UP Oversubscribe=EXCLUSIVE
+    slurm_cluster_name: "{{ cluster_name }}"
+    slurm_control_address: "{{ cluster_name }}-control"
+  tasks:
+    - include_role:
+        name: slurm
+        tasks_from: install.yml
+      tags: install
+    - include_role:
+        name: slurm
+        tasks_from: configure.yml
+      tags: configure
+      

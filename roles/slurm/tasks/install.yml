@@ -1,0 +1,35 @@
+- name: Enable PowerTools repo
+  # NB: doesn't run command  `dnf config-manager --set-enabled PowerTools` as can't make that idempotent
+  lineinfile:
+    path: /etc/yum.repos.d/Rocky-PowerTools.repo
+    create: false # raises error if not already installed
+    regexp: enabled=
+    line: enabled=1
+
+- name: Add repos
+  yum_repository: "{{ item }}"
+  loop:
+    - name: OpenHPC
+      file: OpenHPC
+      description: OpenHPC-2 - Base
+      baseurl: "http://repos.openhpc.community/OpenHPC/2/CentOS_8"
+      gpgcheck: true
+      gpgkey: https://raw.githubusercontent.com/openhpc/ohpc/v2.6.1.GA/components/admin/ohpc-release/SOURCES/RPM-GPG-KEY-OpenHPC-2
+    - name: OpenHPC-updates
+      file: OpenHPC
+      description: OpenHPC-2 - Updates
+      baseurl: "http://repos.openhpc.community/OpenHPC/2/updates/CentOS_8"
+      gpgcheck: true
+      gpgkey: https://raw.githubusercontent.com/openhpc/ohpc/v2.6.1.GA/components/admin/ohpc-release/SOURCES/RPM-GPG-KEY-OpenHPC-2
+    - name: epel
+      file: epel
+      description: "Extra Packages for Enterprise Linux 8 - $basearch"
+      metalink: "https://mirrors.fedoraproject.org/metalink?repo=epel-8&arch=$basearch&infra=$infra&content=$contentdir"
+      gpgcheck: true
+      gpgkey: "https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-8"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Install packages
+  dnf:
+    name: "{{ slurm_packages[slurm_role] }}"

@@ -1,0 +1,43 @@
+- name: Write Munge key
+  copy:
+    content: "{{ slurm_munge_key | b64decode }}"
+    dest: "/etc/munge/munge.key"
+    owner: munge
+    group: munge
+    mode: 0400
+
+- name: Restart munge
+  systemd:
+    name: munge
+    state: restarted
+    enabled: true
+
+- name: Set fact for node description
+  command: slurmd -C
+  register: _slurmd_config
+  when: slurm_role == 'compute'
+
+- debug:
+    var: _slurmd_config
+
+- name: Create slurm.conf
+  template:
+    src: slurm.conf.j2
+    dest: /etc/slurm/slurm.conf
+  when: slurm_role == 'control'
+
+- name: Configure slurmd with control address
+  copy:
+    content: "SLURMD_OPTIONS='--conf-server {{ slurm_control_address }}'"
+    dest: /etc/sysconfig/slurmd
+  when: slurm_role == 'compute'
+
+- name: Start slurm service
+  systemd:
+    name: "{{ slurm_service[slurm_role] }}"
+    state: restarted
+    enabled: true
+  vars:
+    slurm_service:
+      control: slurmctld
+      compute: slurmd
