@@ -26,6 +26,8 @@ resource "openstack_compute_instance_v2" "test" {
 
   user_data = <<-EOF
     #cloud-config
+    fqdn: ${var.cluster_name}-${each.key}
+    prefer_fqdn_over_hostname: true
     user:
         homedir: /var/lib/cloud-user
   EOF
