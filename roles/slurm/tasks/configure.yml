@@ -12,14 +12,6 @@
     state: restarted
     enabled: true
 
-- name: Set fact for node description
-  command: slurmd -C
-  register: _slurmd_config
-  when: slurm_role == 'compute'
-
-- debug:
-    var: _slurmd_config
-
 - name: Create slurm.conf
   template:
     src: slurm.conf.j2
@@ -28,7 +20,7 @@
 
 - name: Configure slurmd with control address
   copy:
-    content: "SLURMD_OPTIONS='--conf-server {{ slurm_control_address }}'"
+    content: "SLURMD_OPTIONS='-Z --conf-server {{ slurm_control_address }}'"
     dest: /etc/sysconfig/slurmd
   when: slurm_role == 'compute'
 

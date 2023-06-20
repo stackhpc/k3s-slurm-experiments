@@ -17,6 +17,8 @@ MinJobAge=300
 SlurmctldTimeout=120
 SlurmdTimeout=300
 Waittime=0
+TreeWidth=65533
+MaxNodeCount=3
 #
 # SCHEDULING
 SchedulerType=sched/backfill
@@ -41,12 +43,6 @@ PropagateResourceLimitsExcept=MEMLOCK
 Epilog=/etc/slurm/slurm.epilog.clean
 SlurmctldParameters=enable_configless
 ReturnToService=1
-
-# Node definitions
-{% for host in groups['all'] %}
-{# will generate an empty line for non-compute #}
-{{ hostvars[host]._slurmd_config.stdout_lines[0] | default('') }}
-{% endfor %}
 
 # Partition definitions
 {{ slurm_partitions | join('\n') }}
