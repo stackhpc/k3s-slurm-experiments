@@ -15,7 +15,8 @@
     slurm_role: "{{ 'control' if 'control' in inventory_hostname else 'compute' }}"
     slurm_munge_key: "{{ lookup('file', 'munge.key') | b64encode }}"
     slurm_partitions:
-      - PartitionName=normal Nodes=ALL Default=YES MaxTime=24:00:00 State=UP Oversubscribe=EXCLUSIVE
+      - NodeSet=normal Feature=normal
+      - PartitionName=normal Nodes=normal Default=YES MaxTime=24:00:00 State=UP Oversubscribe=EXCLUSIVE
     slurm_cluster_name: "{{ cluster_name }}"
     slurm_control_address: "{{ cluster_name }}-control"
   tasks:

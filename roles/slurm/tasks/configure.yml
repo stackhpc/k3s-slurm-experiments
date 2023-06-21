@@ -20,7 +20,7 @@
 
 - name: Configure slurmd with control address
   copy:
-    content: "SLURMD_OPTIONS='-Z --conf-server {{ slurm_control_address }}'"
+    content: "SLURMD_OPTIONS='-Z --conf Feature=normal --conf-server {{ slurm_control_address }}'"
     dest: /etc/sysconfig/slurmd
   when: slurm_role == 'compute'
 
