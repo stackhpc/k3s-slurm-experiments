@@ -1,8 +1,9 @@
 all:
   vars:
+    ansible_user: rocky
     cluster_name: sbk3s
     cluster_node_defaults:
-      image_name: Rocky8
+      image_name: Rocky-8-GenericCloud-8.6.20220702.0.x86_64.qcow2
       flavor_name: general.v1.small
       key_pair: steveb-ansible
     cluster_nodes:

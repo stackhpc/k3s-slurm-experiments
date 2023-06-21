@@ -11,6 +11,5 @@
   add_host:
     name: "{{ item.key }}"
     ansible_host: "{{ item.value }}"
-    ansible_user: cloud-user
     instance_id: "{{ instance_ids[item.key ] }}"
   loop: "{{ cluster_ips | dict2items }}"
