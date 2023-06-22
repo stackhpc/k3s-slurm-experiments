@@ -4,12 +4,16 @@
 
 - name: Set facts from terraform outputs
   set_fact:
-    cluster_ips: "{{ (_tf_outputs.stdout | from_json).ips.value }}"
-    instance_ids: "{{ (_tf_outputs.stdout | from_json).ids.value }}"
+    cluster_nodes: "{{ (_tf_outputs.stdout | from_json).cluster_nodes.value }}"
+
+- debug:
+    msg: "{{ cluster_nodes | to_nice_yaml }}"
+
 
 - name: Add hosts
   add_host:
-    name: "{{ item.key }}"
-    ansible_host: "{{ item.value }}"
-    instance_id: "{{ instance_ids[item.key ] }}"
-  loop: "{{ cluster_ips | dict2items }}"
+    name: "{{ item.name }}"
+    ansible_host: "{{ item.ip }}"
+    instance_id: "{{ item.id }}"
+    groups: "{{ item.groups }}"
+  loop: "{{ cluster_nodes }}"
