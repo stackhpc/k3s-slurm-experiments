@@ -14,9 +14,13 @@
   vars:
     slurm_role: "{{ 'control' if 'control' in inventory_hostname else 'compute' }}"
     slurm_munge_key: "{{ lookup('file', 'munge.key') | b64encode }}"
-    slurm_partitions:
-      - NodeSet=normal Feature=normal
-      - PartitionName=normal Nodes=normal Default=YES MaxTime=24:00:00 State=UP Oversubscribe=EXCLUSIVE
+    slurm_partition_names: "{{ compute_nodes.keys() | map('split', '-') | map('first') }}"
+    slurm_partition_defaults:
+      Default: NO
+      MaxTime: '24:00:00'
+      State: UP
+      Oversubscribe: EXCLUSIVE
+    slurm_partitions: "{{ dict(slurm_partition_names | zip_longest([], fillvalue={})) }}"
     slurm_cluster_name: "{{ cluster_name }}"
     slurm_control_address: "{{ groups['slurm_control'] | first }}"
   tasks:

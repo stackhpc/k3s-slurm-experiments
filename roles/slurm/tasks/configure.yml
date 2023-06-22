@@ -19,12 +19,13 @@
   when: slurm_role == 'control'
 
 - name: Configure slurmd with control address
+  # this is hacky - it finds the partition assuming a nodename of form clustername-partname-index
   copy:
-    content: "SLURMD_OPTIONS='-Z --conf Feature=normal --conf-server {{ slurm_control_address }}'"
+    content: "SLURMD_OPTIONS='-Z --conf Feature={{ (inventory_hostname | split('-'))[1] }} --conf-server {{ slurm_control_address }}'"
     dest: /etc/sysconfig/slurmd
   when: slurm_role == 'compute'
 
-- name: Start slurm service
+- name: Restart slurm service
   systemd:
     name: "{{ slurm_service[slurm_role] }}"
     state: restarted

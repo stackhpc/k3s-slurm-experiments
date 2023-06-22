@@ -18,7 +18,7 @@ SlurmctldTimeout=120
 SlurmdTimeout=300
 Waittime=0
 TreeWidth=65533
-MaxNodeCount=3
+MaxNodeCount=100
 #
 # SCHEDULING
 SchedulerType=sched/backfill
@@ -45,4 +45,7 @@ SlurmctldParameters=enable_configless
 ReturnToService=1
 
 # Partition definitions
-{{ slurm_partitions | join('\n') }}
+{% for part_name, part_opts in slurm_partitions.items() %}
+NodeSet={{ part_name }} Feature={{ part_name }}
+PartitionName={{ part_name }} Nodes={{ part_name }} {{ slurm_partition_defaults | combine(part_opts) | dict2parameters }}
+{% endfor %}

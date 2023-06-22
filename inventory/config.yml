@@ -10,4 +10,5 @@ all:
       control:
         flavor_name: general.v1.medium
     compute_nodes:
-      compute-[0-1]:
+      small-[0-1]:
+      medium-[0-1]:
