@@ -17,4 +17,4 @@
       vars:
         k3s_node_type: "{{ 'server' if 'control' in inventory_hostname else 'agent' }}"
         ks3_token:  nzeSGBpI.Fo22YoBGGSNzH2Y4 # [a-z0-9]{6}.[a-z0-9]{16}
-        k3s_server_address: "{{ hostvars[groups['control'].0].ansible_host }}" # assuming internal DNS is broken!
+        k3s_server_address: "{{ hostvars[groups['slurm_control'].0].ansible_host }}" # assuming internal DNS is broken!
