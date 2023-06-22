@@ -8,11 +8,12 @@ terraform {
 }
 
 variable "cluster_name" {}
-variable "cluster_nodes" {}
+variable "control_nodes" {}
+variable "compute_nodes" {}
 
-resource "openstack_compute_instance_v2" "test" {
+resource "openstack_compute_instance_v2" "control" {
 
-  for_each = var.cluster_nodes
+  for_each = var.control_nodes
 
   name = "${var.cluster_name}-${each.key}"
   image_name = each.value.image_name
@@ -33,10 +34,48 @@ resource "openstack_compute_instance_v2" "test" {
   EOF
 
 }
-output "ips" {
-    value = {for o in openstack_compute_instance_v2.test: o.name => o.network[0].fixed_ip_v4}
+
+resource "openstack_compute_instance_v2" "compute" {
+
+  for_each = var.compute_nodes
+
+  name = "${var.cluster_name}-${each.key}"
+  image_name = each.value.image_name
+  flavor_name = each.value.flavor_name
+  key_pair = each.value.key_pair
+  
+  network {
+    name = "stackhpc-ipv4-geneve"
+    access_network = true
+  }
+
+  user_data = <<-EOF
+    #cloud-config
+    fqdn: ${var.cluster_name}-${each.key}
+    prefer_fqdn_over_hostname: true
+    user:
+        homedir: /var/lib/cloud-user
+  EOF
+
 }
 
-output "ids" {
-  value = {for o in openstack_compute_instance_v2.test: o.name => o.id}
+output "cluster_nodes" {
+    value = concat(
+      [
+        for control in openstack_compute_instance_v2.control: {
+          name = control.name
+          ip = control.network[0].fixed_ip_v4
+          id = control.id
+          groups = ["control"]
+        }
+      ],
+      [
+        for compute in openstack_compute_instance_v2.compute: {
+          name = compute.name
+          ip = compute.network[0].fixed_ip_v4
+          groups = ["compute"]
+          id = compute.id
+        }
+      ],
+    )
 }

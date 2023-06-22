@@ -1,4 +1,5 @@
 {
-    "cluster_name": "{{ cluster_name }}",
-    "cluster_nodes": {{ cluster_nodes | expand_nodes(cluster_node_defaults) | to_nice_json }}
+"cluster_name": "{{ cluster_name }}",
+"control_nodes": {{ control_nodes | default({'control':null}) | expand_nodes(cluster_node_defaults) | to_nice_json }},
+"compute_nodes": {{ compute_nodes | expand_nodes(cluster_node_defaults) | to_nice_json(indent=4) }}
 }

@@ -6,7 +6,8 @@ all:
       image_name: Rocky-8-GenericCloud-8.6.20220702.0.x86_64.qcow2
       flavor_name: general.v1.small
       key_pair: steveb-ansible
-    cluster_nodes:
+    control_nodes:
       control:
         flavor_name: general.v1.medium
+    compute_nodes:
       compute-[0-1]:
